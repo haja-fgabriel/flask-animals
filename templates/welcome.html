@@ -27,6 +27,8 @@
         {% if error %}
             <p class='error'>{{ error }}</p>
         {% endif %}
-
+        <form method="GET" action="/fetch-data">
+            <input type="submit" value="Fetch data">
+        </form>
     </body>
 </html>

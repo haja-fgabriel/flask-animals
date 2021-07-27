@@ -1,2 +1,2 @@
-# pyflask-demo
-Demo API for learning the Flask library at work
+# flask-animals
+Application that demonstrates the functionalities the Flask library has. Useful at work.
