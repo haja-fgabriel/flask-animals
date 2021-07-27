@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Animals</title>
+        <link rel="stylesheet" href="/static/style.css" />
+    </head>
+    <body>
+        {% if name %}
+            <h1>Hi {{ name }}!</h1>
+        {% else %}
+            <h1>Welcome!</h1>
+        {% endif %}
+        <form method="POST" action="/">
+            <label for="username">Username</label>
+            <input type="text" name="username">
+            <br>
+            <label for="animal">Preferred animals:</label>
+            <select name="animal">
+                <option value="bear">Bears</option>
+                <option value="cat">Cats</option>
+                <option value="dog">Dogs</option>
+                <option value="fox">Foxes</option>
+            </select>
+            <br>
+            <input type="submit" value="Confirm">
+        </form>
+        {% if error %}
+            <p class='error'>{{ error }}</p>
+        {% endif %}
+
+    </body>
+</html>
