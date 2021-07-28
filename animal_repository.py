@@ -1,5 +1,6 @@
 class Animal:
-    def __init__(self, name, kind, user, image):
+    def __init__(self, animal_id, name, kind, user, image):
+        self.animal_id = animal_id
         self.name = name
         self.kind = kind
         self.user = user
@@ -20,18 +21,18 @@ def remove_all_for_username(username):
     """
     global animals
     for animal in get_all_for_username(username):
-        animals.pop(animal.name)
+        if animals.get(animal.animal_id): animals.pop(animal.animal_id)
 
-def get_by_name(name):
+def get(animal_id):
     """
-    Get animal by its given name.
+    Get animal by its given identifier.
     """
     global animals
-    return animals.get(name)
+    return animals.get(animal_id)
 
 def add(animal):
     """
     Add an animal.
     """
     global animals
-    animals[animal.name] = animal
+    animals[animal.animal_id] = animal

@@ -7,6 +7,7 @@ name = "pypi"
 flask = "*"
 ipdb = "*"
 requests = "*"
+flask-paginate = "*"
 
 [dev-packages]
 

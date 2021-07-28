@@ -22,7 +22,7 @@ def fetch_bear():
 def fetch_fox():
     response = requests.get('https://randomfox.ca/floof')
     info = json.loads(response.text)
-    img_response = requests.get(info.image)
+    img_response = requests.get(info.get('image'))
     return img_response.content
 
 fetch_method = {

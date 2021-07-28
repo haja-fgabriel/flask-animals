@@ -7,6 +7,9 @@
     <body>
         {% if name %}
             <h1>Hi {{ name }}!</h1>
+            <form method="GET" action="/fetch-data">
+                <input type="submit" value="Fetch data">
+            </form>
         {% else %}
             <h1>Welcome!</h1>
             <form method="POST" action="/">
@@ -25,20 +28,31 @@
             </form>
         {% endif %}
         {% if error %}
-            <p class='error'>{{ error }}</p>
+            <p class="error">{{ error }}</p>
         {% endif %}
-        <form method="GET" action="/fetch-data">
-            <input type="submit" value="Fetch data">
-        </form>
         {% if animals %}
-        <div id="animal-list">
-            {% for animal in animals %}
-            <div>
-                <img src="https://127.0.0.1:5000/img/{{ animal.name }}">
-                <p>{{ animal.name }}</p>
-            </div>
-            {% endfor %}
-        </div>
+            <p class="message">{{ animals|length }} animals available.</p>
+            <form method="GET" action="/">
+                <label for="animal-name">Name of animal:</label>
+                <input name="animal-name" type="text">
+                <input type="submit" value="Search">
+            </form>
+            {% if searched_animals is not none %}
+                <div id="searched_animals">
+                    {% if searched_animals|length is eq(0) %}
+                        <p>No results found.</p>
+                    {% else %}
+                        {{ pagination.info }}
+                        {{ pagination.links }}
+                        {% for animal in searched_animals %}
+                            <div id="{{ animal.animal_id }}">
+                                <img src="http://127.0.0.1:5000/img/{{ animal.animal_id }}">
+                                <a href="http://127.0.0.1:5000/{{ name }}/animals/{{ animal.animal_id }}">{{ animal.name }}</a>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            {% endif %}
         {% endif %}
     </body>
 </html>
