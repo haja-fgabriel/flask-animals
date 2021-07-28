@@ -10,7 +10,6 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 def confirm(username, animal_type):
     global users
-    ipdb.set_trace()
     if user_repository.get(username):
         raise Exception('The user is already confirmed. Please pick another username.')
     user_repository.add(user_repository.User(username, animal_type))

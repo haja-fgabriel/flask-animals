@@ -22,7 +22,6 @@ def welcome():
         if not username:
             return render_template('welcome.html', name=session.get('name'), error='Please provide an username.')
         try:
-            #ipdb.set_trace()
             service.confirm(username, animal)
         except Exception as e:
             app.logger.error(str(e))
@@ -41,7 +40,6 @@ def fetch_data():
 
     this_fetch = datetime.now().replace(tzinfo=None)
     last_fetch = session.get('last_fetch')
-    ipdb.set_trace()
     if last_fetch and (seconds_elapsed := (this_fetch - last_fetch.replace(tzinfo=None)).seconds) < 60:
         return f'Please wait {60 - seconds_elapsed} seconds until fetching is available again', 403
     session['last_fetch'] = this_fetch
