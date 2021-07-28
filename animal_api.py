@@ -4,26 +4,26 @@ import random
 import math
 
 def fetch_cat():
-    response = requests.get('https://cataas.com/cat/says/bws%20rocks?size=640')
-    return response.text
+    response = requests.get('https://cataas.com/cat/says/bws%20rocks?size=480')
+    return response.content
 
 def fetch_dog():
-    response = requests.get(f'https://place.dog/640/640')
-    return response.text
+    response = requests.get(f'https://place.dog/480/480')
+    return response.content
 
 def fetch_bear():
     # generate random height and width, because the API contains a single image for each resolution
-    # we also want values in the [64, 640] interval
-    randH = random.randint(64, 640)
-    randW = random.randint(64, 640)
+    # we also want values in the [64, 480] interval
+    randH = random.randint(64, 480)
+    randW = random.randint(64, 480)
     response = requests.get(f'https://placebear.com/{randW}/{randH}')
-    return response.text
+    return response.content
 
 def fetch_fox():
     response = requests.get('https://randomfox.ca/floof')
     info = json.loads(response.text)
     img_response = requests.get(info.image)
-    return img_response.text
+    return img_response.content
 
 fetch_method = {
     'bear': fetch_bear,

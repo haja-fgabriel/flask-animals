@@ -1,4 +1,4 @@
-from flask import Flask, render_template, session, request, redirect, abort
+from flask import Flask, render_template, session, request, redirect, abort, make_response
 from flask.helpers import url_for
 import ipdb
 
@@ -22,7 +22,7 @@ def welcome():
         if not username:
             return render_template('welcome.html', name=session.get('name'), error='Please provide an username.')
         try:
-            ipdb.set_trace()
+            #ipdb.set_trace()
             service.confirm(username, animal)
         except Exception as e:
             app.logger.error(str(e))
@@ -43,7 +43,7 @@ def fetch_data():
     last_fetch = session.get('last_fetch')
     ipdb.set_trace()
     if last_fetch and (seconds_elapsed := (this_fetch - last_fetch.replace(tzinfo=None)).seconds) < 60:
-        return 'Please wait {60 - seconds_elapsed} seconds until fetching is available again'
+        return f'Please wait {60 - seconds_elapsed} seconds until fetching is available again', 403
     session['last_fetch'] = this_fetch
         
     service.fetch_data(username)
@@ -55,10 +55,12 @@ def get_image(name):
     ipdb.set_trace()
     if not username:
         abort(401)
-    animal = service.get_animal_image_by_name(name)
+    animal = service.get_animal_by_name(name)
     if animal.user != username:
         abort(401)
-    return animal.image
+    response = make_response(animal.image)
+    response.headers['Content-Type'] = 'image/jpeg'
+    return response
     
 
 # TODO finish JSON API
