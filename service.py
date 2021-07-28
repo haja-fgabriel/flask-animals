@@ -1,29 +1,28 @@
 import ipdb
-
-users = {}
-animals = {}
-
-class User:
-    def __init__(self, username, animal_type):
-        self.__username = username
-        self.__animal = animal_type
-
-    def get_username(self): return self.__username
-    def set_username(self, username): self.__username = username
-
-    def get_animal_type(self): return self.__animal
-    def set_animal_type(self, animal): self.__animal = animal
-    
-    username = property(get_username, set_username)
-    animal_type = property(get_animal_type, set_animal_type)
-
+import animal_api
+import utils
+import animal_repository
+import user_repository
 
 def confirm(username, animal_type):
     global users
     ipdb.set_trace()
-    if users.get(username):
+    if user_repository.get(username):
         raise Exception('The user is already confirmed. Please pick another username.')
-    users[username] = User(username, animal_type)
+    user_repository.add(user_repository.User(username, animal_type))
 
-def fetch_data():
-    pass
+def fetch_data(username):
+    user = user_repository.get(username)
+    ipdb.set_trace()
+    for i in range(200):
+        image = animal_api.fetch_method[user.animal_type]()
+        name = utils.random_name()
+        animal = animal_repository.Animal(name, user.animal_type, user.username, image)
+        animal_repository.add(animal)
+
+def get_animal_by_name(name):
+    # TODO check if user is valid
+    return animal_repository.get_by_name(name)
+
+def get_animals_for_username(username):
+    return animal_repository.get_all_for_username(username)

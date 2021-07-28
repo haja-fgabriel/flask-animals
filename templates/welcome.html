@@ -9,26 +9,36 @@
             <h1>Hi {{ name }}!</h1>
         {% else %}
             <h1>Welcome!</h1>
+            <form method="POST" action="/">
+                <label for="username">Username</label>
+                <input type="text" name="username">
+                <br>
+                <label for="animal">Preferred animals:</label>
+                <select name="animal">
+                    <option value="bear">Bears</option>
+                    <option value="cat">Cats</option>
+                    <option value="dog">Dogs</option>
+                    <option value="fox">Foxes</option>
+                </select>
+                <br>
+                <input type="submit" value="Confirm">
+            </form>
         {% endif %}
-        <form method="POST" action="/">
-            <label for="username">Username</label>
-            <input type="text" name="username">
-            <br>
-            <label for="animal">Preferred animals:</label>
-            <select name="animal">
-                <option value="bear">Bears</option>
-                <option value="cat">Cats</option>
-                <option value="dog">Dogs</option>
-                <option value="fox">Foxes</option>
-            </select>
-            <br>
-            <input type="submit" value="Confirm">
-        </form>
         {% if error %}
             <p class='error'>{{ error }}</p>
         {% endif %}
         <form method="GET" action="/fetch-data">
             <input type="submit" value="Fetch data">
         </form>
+        {% if animals %}
+        <div id="animal-list">
+            {% for animal in animals %}
+            <div>
+                <img src="https://127.0.0.1:5000/img/{{ animal.name }}">
+                <p>{{ animal.name }}</p>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
     </body>
 </html>
