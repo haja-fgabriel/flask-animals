@@ -8,10 +8,30 @@ def fetch_cat():
     return response.content
 
 def fetch_dog():
-    response = requests.get(f'https://dog.ceo/api/breeds/image/random')
-    info = json.loads(response.text)
-    img_response = requests.get(info.get('message'))
-    return response.content
+    def fetch_from_place_dog():
+        randH = random.randint(64, 480)
+        randW = random.randint(64, 480)
+        response = requests.get(f'https://place.dog/{randW}/{randH}')
+        return response.content
+    
+    def fetch_from_dog_ceo():
+        response = requests.get(f'https://dog.ceo/api/breeds/image/random')
+        info = json.loads(response.text)
+        img_response = requests.get(info.get('message'))
+        return img_response.content
+    
+    def fetch_from_shibe_online():
+        response = requests.get('http://shibe.online/api/shibes')
+        info = json.loads(response.text)
+        img_response = requests.get(info[0])
+        return img_response.content
+
+    return random.choice([
+        #fetch_from_dog_ceo,
+        #fetch_from_shibe_online,
+        fetch_from_place_dog
+    ])()
+
 
 def fetch_bear():
     # generate random height and width, because the API contains a single image for each resolution

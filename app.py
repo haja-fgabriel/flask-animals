@@ -3,6 +3,8 @@ from flask.helpers import url_for
 from flask_paginate import Pagination, get_page_parameter
 import ipdb
 import json
+import asyncio
+from concurrent.futures import ThreadPoolExecutor
 
 app = Flask(__name__)
 
@@ -57,18 +59,17 @@ def fetch_data():
         return f'Please wait {60 - seconds_elapsed} seconds until fetching is available again<br><a href="javascript:window.history.back()">Go back</a>', 403
     session['last_fetch'] = this_fetch
         
-    service.fetch_data(username)
+    with ThreadPoolExecutor() as executor:
+        executor.submit(service.fetch_data, username)
     return redirect(url_for('welcome'))
 
-@app.route("/img/<animal_id>")
-def get_image(animal_id):
+@app.route("/img/<int:image_id>")
+def get_image(image_id):
     username = session.get('username')
     if not username:
         abort(401)
-    animal = service.get_animal(animal_id)
-    if not animal: abort(404)
-    if animal.user != username: abort(401)
-    response = make_response(animal.image)
+    image = service.get_image(image_id)
+    response = make_response(image.data)
     response.headers['Content-Type'] = 'image/jpeg'
     return response
     
@@ -95,6 +96,8 @@ def animals(username, animal_id):
         data = request.get_json()
         if not data.get('animal_id') or data.get('animal_id') != animal_id:
             return 'The animal ID in the URL must match the animal ID in the request body!', 400
+        if data.get('image'):
+            return "It's not allowed to update the animal's image ID.", 400
         try:
             service.update_animal(username, data.get('animal_id'), data.get('name'))
             return 'OK'

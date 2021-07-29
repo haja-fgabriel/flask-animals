@@ -33,8 +33,7 @@
         {%- if animals -%}
             <p class="message">{{ animals|length }} animals available.</p>
             <form method="GET" action="/">
-                <label for="animal-name">Name of animal:</label>
-                <input name="animal-name" type="text">
+                <input name="animal-name" type="text" placeholder="Type the animal's name">
                 <input type="submit" value="Search">
             </form>
             {%- if searched_animals is not none -%}
