@@ -88,7 +88,6 @@ def all_animals(username):
 @app.route("/<username>/animals/<animal_id>", methods=["GET", "POST"])
 def animals(username, animal_id):
     if request.method == 'GET':
-        # TODO move your lazy ass and go to work!
         if not service.get_animal(animal_id):
             abort(404)
         return render_template('animal_page.html', animal_id=animal_id)
