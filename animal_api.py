@@ -8,7 +8,9 @@ def fetch_cat():
     return response.content
 
 def fetch_dog():
-    response = requests.get(f'https://place.dog/480/480')
+    response = requests.get(f'https://dog.ceo/api/breeds/image/random')
+    info = json.loads(response.text)
+    img_response = requests.get(info.get('message'))
     return response.content
 
 def fetch_bear():
@@ -21,7 +23,7 @@ def fetch_bear():
 
 def fetch_fox():
     response = requests.get('https://randomfox.ca/floof')
-    info = json.loads(response.text)
+    info = json.loads(response.content)
     img_response = requests.get(info.get('image'))
     return img_response.content
 
