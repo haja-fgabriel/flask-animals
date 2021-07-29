@@ -8,6 +8,7 @@ flask = "*"
 ipdb = "*"
 requests = "*"
 flask-paginate = "*"
+flask-sqlalchemy = "*"
 
 [dev-packages]
 
