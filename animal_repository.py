@@ -36,3 +36,10 @@ def add(animal):
     """
     global animals
     animals[animal.animal_id] = animal
+
+def update(animal):
+    """
+    Updates the given animal.
+    """
+    global animals
+    animals[animal.animal_id] = animal

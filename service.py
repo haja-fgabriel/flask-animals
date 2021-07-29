@@ -35,6 +35,17 @@ def fetch_data(username, count=200):
             animal_repository.add(future.result())
 
 
+# TODO move these methods to animal_service.py
+
+def update_animal(username, animal_id, name):
+    animal = animal_repository.get(animal_id)
+    if animal.user != username:
+        raise Exception('The given animal does not belong to the logged username!')
+    if len(name) < 3 or len(name) > 45:
+        raise Exception('The given name must have the length between 3 and 45!')
+    animal.name = name
+    animal_repository.update(animal)
+
 def get_animal(animal_id):
     return animal_repository.get(animal_id)
 

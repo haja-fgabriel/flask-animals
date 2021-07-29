@@ -2,7 +2,7 @@ from flask import Flask, render_template, session, request, redirect, abort, mak
 from flask.helpers import url_for
 from flask_paginate import Pagination, get_page_parameter
 import ipdb
-
+import json
 
 app = Flask(__name__)
 
@@ -72,6 +72,19 @@ def get_image(animal_id):
     response.headers['Content-Type'] = 'image/jpeg'
     return response
     
+@app.route("/<username>/animals")
+def all_animals(username):
+    def to_json(animal):
+        return {
+            'animal_id': animal.animal_id,
+            'name': animal.name,
+            'image': 'http://127.0.0.1:5000' + url_for('get_image', animal_id=animal.animal_id),
+            'owner': animal.user
+        }
+    response = make_response(json.dumps([*map(to_json, service.get_animals_for_username(username))]))
+    response.headers['content-type'] = 'application/json'
+    return response
+
 @app.route("/<username>/animals/<animal_id>", methods=["GET", "POST"])
 def animals(username, animal_id):
     if request.method == 'GET':
@@ -80,7 +93,14 @@ def animals(username, animal_id):
             abort(404)
         return render_template('animal_page.html', animal_id=animal_id)
     elif request.method == 'POST':
-        pass
+        data = request.get_json()
+        if not data.get('animal_id') or data.get('animal_id') != animal_id:
+            return 'The animal ID in the URL must match the animal ID in the request body!', 400
+        try:
+            service.update_animal(username, data.get('animal_id'), data.get('name'))
+            return 'OK'
+        except Exception as e:
+            return str(e), 400
 
 # TODO finish JSON API
 @app.route("/<username>/animals")
