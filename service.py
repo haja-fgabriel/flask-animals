@@ -3,11 +3,10 @@ import random
 import ipdb
 import animal_api
 import utils
-import animal_repository
-import user_repository
 import logging
 import asyncio
 import re
+from repository import animal_repository, user_repository
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from names import names
 
