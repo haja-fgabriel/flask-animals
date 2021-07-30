@@ -71,7 +71,6 @@ def fetch_data(username, count=200):
                         new_futures.append(executor.submit(random_animal))
             futures = [*not_done] + new_futures
 
-    ipdb.set_trace()
     try:
         animals = get_animals_for_username(username)
         # Lazily add the newly fetched images to each animal

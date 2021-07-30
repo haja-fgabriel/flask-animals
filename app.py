@@ -5,7 +5,6 @@ import ipdb
 import json
 import asyncio
 from concurrent.futures import ThreadPoolExecutor
-from dtos import ImageDTO, AnimalDTO
 
 app = Flask(__name__)
 
