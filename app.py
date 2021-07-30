@@ -5,6 +5,7 @@ import ipdb
 import json
 import asyncio
 from concurrent.futures import ThreadPoolExecutor
+from dtos import ImageDTO, AnimalDTO
 
 app = Flask(__name__)
 
@@ -59,8 +60,7 @@ def fetch_data():
         return f'Please wait {60 - seconds_elapsed} seconds until fetching is available again<br><a href="javascript:window.history.back()">Go back</a>', 403
     session['last_fetch'] = this_fetch
         
-    with ThreadPoolExecutor() as executor:
-        executor.submit(service.fetch_data, username)
+    service.fetch_data(username)
     return redirect(url_for('welcome'))
 
 @app.route("/img/<int:image_id>")
@@ -76,12 +76,13 @@ def get_image(image_id):
 @app.route("/<username>/animals")
 def all_animals(username):
     def to_json(animal):
-        return {
+        result = {
             'animal_id': animal.animal_id,
             'name': animal.name,
-            'image': 'http://127.0.0.1:5000' + url_for('get_image', animal_id=animal.animal_id),
             'owner': animal.user
         }
+        if animal.image: result['image'] = animal.image
+        return result
     response = make_response(json.dumps([*map(to_json, service.get_animals_for_username(username))]))
     response.headers['content-type'] = 'application/json'
     return response
@@ -91,7 +92,9 @@ def animals(username, animal_id):
     if request.method == 'GET':
         if not service.get_animal(animal_id):
             abort(404)
-        return render_template('animal_page.html', animal_id=animal_id)
+        animal = service.get_animal(animal_id)
+        if not animal: abort(404)
+        return render_template('animal_page.html', image_id=animal.image)
     elif request.method == 'POST':
         data = request.get_json()
         if not data.get('animal_id') or data.get('animal_id') != animal_id:

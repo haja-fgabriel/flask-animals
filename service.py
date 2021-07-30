@@ -12,6 +12,7 @@ from repository import AnimalRepository, UserRepository, ImageRepository
 from repository import Animal, User, Image
 from concurrent.futures import ThreadPoolExecutor, as_completed, wait
 from names import names
+from dtos import ImageDTO, AnimalDTO
 
 def confirm(username, animal_type):
     if not UserRepository.get(username):
@@ -22,20 +23,25 @@ def get_user(username):
 
 def fetch_data(username, count=200):
     user = UserRepository.get(username)
-    AnimalRepository.remove_all_for_username(username)
+    print(AnimalRepository.get_all_images_for_username(username))
+    try:
+        for image in AnimalRepository.get_all_images_for_username(username):
+            if image: ImageRepository.remove(image)
+        AnimalRepository.remove_all_for_username(username)
+    except Exception as e:
+        print(e)
 
     def random_image():
         data = animal_api.fetch_method[user.animal_type]()
-        hash = hashlib.md5(data).digest()
-        return Image(data=data, hash=hash)
+        hash = hashlib.sha256(data).digest()
+        return ImageDTO(data, hash)
 
     def random_animal():
         name = random.choice(names)
-        return Animal(name=name, kind=user.animal_type, user=username)
+        return AnimalDTO(name, user.animal_type, username)
     
     # insane measures to boost performance; do not try this at home
     image_ids = []
-    animals = []
     with ThreadPoolExecutor() as executor:
         futures = [executor.submit(random_image) for i in range(count)] + \
             [executor.submit(random_animal) for i in range(count)]
@@ -44,28 +50,37 @@ def fetch_data(username, count=200):
             all_fetched = True
             done, not_done = wait(futures, timeout=0.45)
             if len(not_done): all_fetched = False
+            new_futures = []
             for future in done:
                 data = future.result()
-                if type(data) is Image:
+                if type(data) is ImageDTO:
                     try: 
-                        ImageRepository.add(data)
-                        image_ids.append(data.image_id)
+                        print(data.data[0:60])
+                        ImageRepository.add(Image(data=data.data, hash=data.hash))
+                        image = ImageRepository.get_by_hash(data.hash)
+                        image_ids.append(image.image_id)
                     except Exception as e: 
-                        #ipdb.set_trace()
-                        executor.submit(random_image)
-                elif type(data) is Animal:
-                    try: 
-                        AnimalRepository.add(data)
+                        print(e)
+                        new_futures.append(executor.submit(random_image))
+                elif type(data) is AnimalDTO:
+                    try:
+                        AnimalRepository.add(Animal(name=data.name, kind=data.kind, user=data.user))
                         animals.append(data)
                     except Exception as e: 
-                        #ipdb.set_trace()
-                        executor.submit(random_animal)
+                        print(e)
+                        new_futures.append(executor.submit(random_animal))
+            futures = [*not_done] + new_futures
 
     ipdb.set_trace()
-    # Lazily add the newly fetched images to each animal
-    for animal, image_id in zip(animals, image_ids):
-        animal.image_id = image_id
-        AnimalRepository.update(animal)
+    try:
+        animals = get_animals_for_username(username)
+        # Lazily add the newly fetched images to each animal
+        for animal, image_id in zip(animals, image_ids):
+            pass
+            animal.image = image_id
+            AnimalRepository.update(animal)
+    except Exception as e:
+        print(e)
 
 def get_image(image_id):
     return ImageRepository.get(image_id)

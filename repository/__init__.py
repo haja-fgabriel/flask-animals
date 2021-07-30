@@ -31,6 +31,11 @@ class AnimalRepository:
             session.expunge_all()
             return animals
 
+    def get_all_images_for_username(username):
+        with Session.begin() as session:
+            image_ids = [row[0] for row in session.query(Animal.image).filter_by(user=username).all()]
+            return image_ids
+
     def remove_all_for_username(username):
         """
         Removes all animals for the username.
@@ -59,7 +64,7 @@ class AnimalRepository:
         Updates the given animal.
         """
         with Session.begin() as session:
-            session.query(Animal).filter(animal_id=animal.animal_id) \
+            session.query(Animal).filter_by(animal_id=animal.animal_id) \
                 .update({"name": animal.name, "image": animal.image}, synchronize_session="fetch")
 
 class Image(Base):
@@ -79,6 +84,16 @@ class ImageRepository:
             image = session.query(Image).filter_by(image_id=image_id).first()
             session.expunge_all()
             return image
+    
+    def get_by_hash(hash):
+        with Session.begin() as session:
+            image = session.query(Image).filter_by(hash=hash).first()
+            session.expunge_all()
+            return image
+        
+    def remove(image_id):
+        with Session.begin() as session:
+            session.query(Image).filter_by(image_id=image_id).delete(synchronize_session="fetch")
 
 class User(Base):
     __tablename__ = 'users'    
