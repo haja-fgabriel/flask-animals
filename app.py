@@ -68,6 +68,7 @@ def get_image(image_id):
     if not username:
         abort(401)
     image = service.get_image(image_id)
+    if not image: abort(404)
     response = make_response(image.data)
     response.headers['Content-Type'] = 'image/jpeg'
     return response
