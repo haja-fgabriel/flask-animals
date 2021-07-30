@@ -40,7 +40,6 @@ def fetch_data(username, count=200):
         name = random.choice(names)
         return AnimalDTO(name, user.animal_type, username)
     
-    # insane measures to boost performance; do not try this at home
     image_ids = []
     with ThreadPoolExecutor() as executor:
         futures = [executor.submit(random_image) for i in range(count)] + \
@@ -65,7 +64,6 @@ def fetch_data(username, count=200):
                 elif type(data) is AnimalDTO:
                     try:
                         AnimalRepository.add(Animal(name=data.name, kind=data.kind, user=data.user))
-                        animals.append(data)
                     except Exception as e: 
                         print(e)
                         new_futures.append(executor.submit(random_animal))
