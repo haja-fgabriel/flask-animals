@@ -8,7 +8,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 app = Flask(__name__)
 
-app.config.update(SECRET_KEY="PLEASE-ADD-YOURS")
+app.config.update(SECRET_KEY="Zdwmyo1SN8Fc+ay6+l++6hggBFe5s2UQMprPLqaBlLNeKuOb")
 
 import service
 from datetime import date, datetime, timedelta, tzinfo
@@ -106,14 +106,3 @@ def update_animal(username, animal_id):
         return "OK"
     except Exception as e:
         return str(e), 400
-
-
-# TODO finish JSON API
-@app.route("/<username>/animals")
-def get_all(username):
-    pass
-
-
-@app.route("/<username>/animals/<animal_id>", methods=["POST"])
-def get_by_id(username, animal_id):
-    pass
