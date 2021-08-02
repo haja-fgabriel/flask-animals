@@ -3,22 +3,21 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, String, Integer, LargeBinary
 from sqlalchemy.sql.schema import ForeignKey
-import ipdb
 
 
-engine = create_engine('sqlite:///app.db', echo=True)
+engine = create_engine("sqlite:///app.db", echo=True)
 Base = declarative_base()
 Session = sessionmaker(engine)
 
 
 class Animal(Base):
-    __tablename__ = 'animals'
-    
-    animal_id = Column('animal_id', Integer, primary_key=True)
-    name = Column('name', String, unique=True)
-    kind = Column('kind', String)
-    user = Column('user', String)
-    image = Column('image', Integer, ForeignKey('images.image_id'))
+    __tablename__ = "animals"
+
+    animal_id = Column("animal_id", Integer, primary_key=True)
+    name = Column("name", String, unique=True)
+    kind = Column("kind", String)
+    user = Column("user", String)
+    image = Column("image", Integer, ForeignKey("images.image_id"))
 
 
 class AnimalRepository:
@@ -64,42 +63,47 @@ class AnimalRepository:
         Updates the given animal.
         """
         with Session.begin() as session:
-            session.query(Animal).filter_by(animal_id=animal.animal_id) \
-                .update({"name": animal.name, "image": animal.image}, synchronize_session="fetch")
+            session.query(Animal).filter_by(animal_id=animal.animal_id).update(
+                {"name": animal.name, "image": animal.image}, synchronize_session="fetch"
+            )
+
 
 class Image(Base):
-    __tablename__ = 'images'
+    __tablename__ = "images"
 
-    image_id = Column('image_id', Integer, primary_key=True)
-    data = Column('data', LargeBinary)
-    hash = Column('hash', LargeBinary, unique=True)
+    image_id = Column("image_id", Integer, primary_key=True)
+    data = Column("data", LargeBinary)
+    hash = Column("hash", LargeBinary, unique=True)
+
 
 class ImageRepository:
     def add(image):
         with Session.begin() as session:
             session.add(image)
-    
+
     def get(image_id):
         with Session.begin() as session:
             image = session.query(Image).filter_by(image_id=image_id).first()
             session.expunge_all()
             return image
-    
+
     def get_by_hash(hash):
         with Session.begin() as session:
             image = session.query(Image).filter_by(hash=hash).first()
             session.expunge_all()
             return image
-        
+
     def remove(image_id):
         with Session.begin() as session:
             session.query(Image).filter_by(image_id=image_id).delete(synchronize_session="fetch")
 
-class User(Base):
-    __tablename__ = 'users'    
 
-    username = Column('username', String, primary_key=True)
-    animal_type = Column('animal_type', String(10))
+class User(Base):
+    __tablename__ = "users"
+
+    username = Column("username", String, primary_key=True)
+    animal_type = Column("animal_type", String(10))
+
 
 class UserRepository:
     def add(user):

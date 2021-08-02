@@ -1,14 +1,11 @@
 from flask import Flask, render_template, session, request, redirect, abort, make_response
 from flask.helpers import url_for
 from flask_paginate import Pagination, get_page_parameter
-import ipdb
 import json
-import asyncio
-from concurrent.futures import ThreadPoolExecutor
 
 app = Flask(__name__)
 
-app.config.update(SECRET_KEY="Zdwmyo1SN8Fc+ay6+l++6hggBFe5s2UQMprPLqaBlLNeKuOb")
+app.config.update(SECRET_KEY="ADD-YOUR-OWN!!!")
 
 import service
 from datetime import date, datetime, timedelta, tzinfo
