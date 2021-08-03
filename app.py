@@ -81,7 +81,7 @@ def all_animals(username):
     return response
 
 
-@app.route("/<username>/animals/<animal_id>", methods=["GET"])
+@app.route("/<username>/animals/<animal_id>")
 def animal_page(username, animal_id):
     if not service.get_animal(animal_id):
         abort(404)
