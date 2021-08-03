@@ -1,23 +1,7 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, String, Integer, LargeBinary
-from sqlalchemy.sql.schema import ForeignKey
+from domain import Animal, User, Image, Base
+from database import Session, create_tables
 
-
-engine = create_engine("sqlite:///app.db", echo=True)
-Base = declarative_base()
-Session = sessionmaker(engine)
-
-
-class Animal(Base):
-    __tablename__ = "animals"
-
-    animal_id = Column("animal_id", Integer, primary_key=True)
-    name = Column("name", String, unique=True)
-    kind = Column("kind", String)
-    user = Column("user", String)
-    image = Column("image", Integer, ForeignKey("images.image_id"))
+create_tables(Base)
 
 
 class AnimalRepository:
@@ -68,14 +52,6 @@ class AnimalRepository:
             )
 
 
-class Image(Base):
-    __tablename__ = "images"
-
-    image_id = Column("image_id", Integer, primary_key=True)
-    data = Column("data", LargeBinary)
-    hash = Column("hash", LargeBinary, unique=True)
-
-
 class ImageRepository:
     def add(image):
         with Session.begin() as session:
@@ -98,13 +74,6 @@ class ImageRepository:
             session.query(Image).filter_by(image_id=image_id).delete(synchronize_session="fetch")
 
 
-class User(Base):
-    __tablename__ = "users"
-
-    username = Column("username", String, primary_key=True)
-    animal_type = Column("animal_type", String(10))
-
-
 class UserRepository:
     def add(user):
         """
@@ -118,6 +87,3 @@ class UserRepository:
             user = session.query(User).filter_by(username=username).first()
             session.expunge_all()
             return user
-
-
-Base.metadata.create_all(bind=engine)
